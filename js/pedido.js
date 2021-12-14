@@ -1,16 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-  hacerCarrito(carrito)
+  hacerCarrito()
 })
 // <------------------------ Hacer las cards del carrito ------------------------>
-const hacerCarrito = (data) =>{
-let cardCarrito = ``
+const hacerCarrito = () =>{
+
 let precioFinal = 0;
 let cantidadFinal = 0;
-  if(data.length === 0){
-    let carritoHtml = document.getElementById("princ").innerHTML = `El carrito esta Vacio`
+
+  if(carrito.length === 0){
+    let carritoHtml = document.getElementById("princ")
+    carritoHtml.innerHTML = `El carrito esta Vacio`
   }else{
-  data.forEach(element => {
-    cardCarrito +=`
+  carrito.forEach(element => {
+    let cardCarrito =`
       <div class="col-sm-12 col-md-6 col-lg-3 ">
           <div class="card h-100">
             <a href="#"><img class="card-img-top" src="${element.img}" alt=""></a>
@@ -22,31 +24,40 @@ let cantidadFinal = 0;
               <p class="card-text">Cantidad ${element.descripcion}</p>
             </div>
             <div class="card-footer"><small class="text-muted">Cantidad ${element.cantidad}</small>
-            <button class="btn btn-info btn-sm"  onclick='sumarCantidad(${element.id}, ${element.stock})'>
+            <button class="btn btn-info btn-sm"  id="+${element.id}">
                 +
             </button>
-            <button class="btn btn-danger btn-sm" onclick='restarCantidad(${element.id})'>
+            <button class="btn btn-danger btn-sm" id="-${element.id}">
                 -
             </button>
             </div>
           </div>
         </div>`   
-cantidadFinal += element.cantidad;    
-precioFinal += element.precio * element.cantidad;
-  })};
-$("#cardCarrito").html(cardCarrito)
+
+      $("#cardCarrito").append(cardCarrito)
+     
+      document.getElementById(`+${element.id}`).addEventListener("click", () => sumarCantidad(element))
+      document.getElementById(`-${element.id}`).addEventListener("click", () => restarCantidad())
+
+      cantidadFinal += element.cantidad;    
+      precioFinal += element.precio * element.cantidad;
+})};
+
 $("#cantidadFinal").html(cantidadFinal)
 $("#precioFinal").html(precioFinal)
 }
 // <------------------------ Boton suma de cantidad ------------------------>
-function sumarCantidad(item,item2) {
-    if (item2 >= 1 ){
-      carrito.find(itemCarrito => itemCarrito.id === item).cantidad++;
-      carrito.find(itemCarrito => itemCarrito.id === item).stock--;
-      productos.find(itemProducto => itemProducto.id === item).stock--;
-        localStorage.carrito = JSON.stringify(carrito)
-        localStorage.productos = JSON.stringify(productos)
-          hacerCarrito(carrito)
+function sumarCantidad(item) {
+
+  console.log(item)
+
+  let aux = carrito.find(Element => Element.id == item.id)
+
+    if (item.cantidad < aux.stock ){
+      carrito.find(itemCarrito => itemCarrito.id === item.id).cantidad++;
+      document.getElementById("cardCarrito").innerHTML = ``
+      hacerCarrito()
+      carritoStorage()
     }else{
     $("#textPop").html(`Mil dispulpa no tenes stock de ${JSON.stringify(item.nombre)}, porfavor intente mas tarde.`)
     $("#pop").show(1000)
@@ -56,6 +67,7 @@ function sumarCantidad(item,item2) {
 
 // <------------------------ Boton resta de cantioda ------------------------>
 function restarCantidad(item) {
+
   const verificar = element => element.id == item;
     
   if(carrito.some(verificar)){
@@ -70,7 +82,7 @@ function restarCantidad(item) {
           hacerCarrito(carrito)
       }
       else{ 
-      carrito[restarItem].cantidad --;
+      carrito[restarItem].cantidad--;
       carrito.find(itemCarrito => itemCarrito.id === item).stock++;
       productos.find(itemProducto => itemProducto.id === item).stock++;
         localStorage.carrito = JSON.stringify(carrito)

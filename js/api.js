@@ -25,6 +25,13 @@ async function generarLinkDePago() {
       }),
     }
   );
+
   const data = await response.json();
   window.open(data.init_point, "_blank");
 }
+
+
+
+
+
+

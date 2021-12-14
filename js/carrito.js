@@ -1,28 +1,29 @@
 //Agregar al carrrito
 function agregarAlCarrito(item){  
-  const verificarRepeticion = element => element.id == item.id;  
-  if (item.stock <= 0) {
+
+  let aux = carrito.find(Element => Element.id == item.id)
+  
+  const verificarRepeticion = element => element.id === item.id;  
+
+  if((item.stock <= 0) || (aux != undefined && aux.cantidad >= item.stock)){
+
     $("#textPop").html(`Mil dispulpa no tenes stock de ${JSON.stringify(item.nombre)}, porfavor intente mas tarde.`)
     $("#pop").show(1000)
     $("#pop").fadeOut(3000)
+
+  }else if(carrito.some(verificarRepeticion)){
+
+    carrito.find(Element => Element.id === item.id).cantidad++;
+    carritoStorage()
+
+  }else{
+
+    carrito.push(item)
+    carrito.find(Element => Element.id === item.id).cantidad++;
+    carritoStorage()
+
   }
-  else if (carrito.some(verificarRepeticion)) {
-      carrito.find(itemCarrito => itemCarrito.id === item.id).cantidad++;
-      carrito.find(itemCarrito => itemCarrito.id === item.id).stock--;
-      productos.find(itemProducto => itemProducto.id === item.id).stock--;
-        localStorage.carrito = JSON.stringify(carrito)
-        localStorage.productos = JSON.stringify(productos)
-        cards()
-  }
-   else{
-      carrito.push(item);
-      carrito.find(itemCarrito => itemCarrito.id === item.id).stock--;
-      productos.find(itemProducto => itemProducto.id === item.id).stock--;
-      localStorage.carrito = JSON.stringify(carrito)
-      localStorage.productos = JSON.stringify(productos)
-      cards()
-      }
-    
+  
 }
 
 
